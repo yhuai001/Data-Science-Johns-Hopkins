@@ -1,0 +1,70 @@
+---
+title: "R Markdown Presentation & Plotly"
+author: "yhuai"
+date: "24 May 2018"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## R Markdown
+
+This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+
+## Description
+
+Create a web page presentation using R Markdown that features a plot created with Plotly. Host your webpage on either GitHub Pages, RPubs, or NeoCities. Your webpage must contain the date that you created the document, and it must contain a plot created with Plotly. We would love to see you show off your creativity!
+
+## Slide with Plotly1
+
+```{r, echo=TRUE, comment=NA, cache=FALSE, message=FALSE, warning=FALSE}
+library(plotly)
+datasets::mtcars
+plot_ly(mtcars, x = mtcars$wt, y=mtcars$mpg, mode = "markers")
+plot_ly(mtcars, x = mtcars$wt, y=mtcars$mpg, mode = "markers", color = as.factor(mtcars$cyl))
+plot_ly(mtcars, x = mtcars$wt, y=mtcars$mpg, mode = "markers", color = mtcars$disp)
+plot_ly(mtcars, x = mtcars$wt, y=mtcars$mpg, mode = "markers", color = as.factor(mtcars$cyl),size=mtcars$hp)
+
+```
+
+## Slide with Plotly2
+
+```{r, echo=TRUE, comment=NA, cache=FALSE, message=FALSE, warning=FALSE}
+library(plotly)
+set.seed(1993)
+temp <- rnorm(100, mean=30, sd=5)
+pressue <- rnorm(100)
+dtime <- 1:100
+plot_ly(x = temp, y = pressue, z = dtime,
+        type = "scatter3d", mode="markers", color=temp)
+
+data("airmiles")
+airmiles
+plot_ly(x=time(airmiles), y=airmiles)
+
+```
+
+## Slide with Plotly3
+
+```{r, echo=TRUE, comment=NA, cache=FALSE, message=FALSE, warning=FALSE}
+library(plotly);library(tidyr);library(dplyr)
+data("EuStockMarkets")
+stocks <- as.data.frame(EuStockMarkets) %>%
+    gather(index,price) %>%
+    mutate(time=rep(time(EuStockMarkets),4))
+
+plot_ly(stocks, x = stocks$time, y = stocks$price, color=stocks$index)
+
+plot_ly(iris, x = iris$Petal.Length, type="histogram" )
+plot_ly(iris, y = iris$Petal.Length, color = iris$Species, type="box" )
+
+terrain1 <- matrix(rnorm(100*100), nrow = 100, ncol=100)
+plot_ly(z=terrain1, type="heatmap")
+
+terrain2 <- matrix(sort(rnorm(100*100)), nrow = 100, ncol=100)
+plot_ly(z=terrain2, type="surface")
+```

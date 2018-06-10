@@ -1,0 +1,38 @@
+My First Markdown File
+======================
+
+```{r}
+library(datasets)
+data(airquality)
+summary(airquality)
+```
+
+```{r}
+pairs(airquality)
+```
+
+```{r fitmodel}
+library(stats)
+fit <- lm(Ozone~Wind + Solar.R + Temp, data = airquality)
+summary(fit)
+```
+
+* First 
+
+* Second
+
+```{r simulatedata, echo=TRUE}
+x <- rnorm(100); y <- x+rnorm(100, sd=0.5)
+```
+
+```{r scatterplot, fig.height=4}
+par(mar = c(5, 4, 1, 1), las=1)
+plot(x, y, main="My Simualted Data")
+```
+```{r showtable, results="asis"}
+library(xtable)
+xt <- xtable(summary(fit))
+print(xt, type="html")
+```
+
+

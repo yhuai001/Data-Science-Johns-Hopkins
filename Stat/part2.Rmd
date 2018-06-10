@@ -1,0 +1,64 @@
+---
+title: "Statistical Inference Course Project Part 2"
+author: "yhuai"
+date: "2018/4/21"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+## Part 2: Basic Inferential Data Analysis Instructions
+
+Now in the second portion of the project, we're going to analyze the ToothGrowth data in the R datasets package.
+
+```{r echo=FALSE}
+library(datasets)
+library(ggplot2)
+
+data("ToothGrowth")
+data <- ToothGrowth
+str(data)
+summary(data)
+```
+
+
+From the summary function and the plot, we can find that the tooth growth length is increasing as dosage increasing. The two kind of supplements-OJ and VC, looks have similar effects when dosage is 2.
+```{r}
+g <- ggplot(data=ToothGrowth,aes(x=factor(dose), y=len))
+g <- g + facet_grid(.~ data$supp)
+g <- g + geom_boxplot(aes(fill=supp))
+g <- g + labs(x="Dose",y="length",title="Tooth Length by Dose Based on Types")
+g
+
+```
+
+
+Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose.
+
+We assume that OJ and VC have the same effect on tooth growth.
+
+```{r}
+#Hypothesis
+h1 <- t.test(len ~ supp, data=subset(data,dose==0.5))
+h1
+p1 <- h1$p.value
+h2 <- t.test(len ~ supp, data=subset(data,dose==1.0))
+h2
+p2 <- h2$p.value
+h3 <- t.test(len ~ supp, data=subset(data,dose==2.0))
+h3
+p3 <- h3$p.value
+rp1 <- round(p1,3)
+rp2 <- round(p2,3)
+rp3 <- round(p3,3)
+ma <- matrix(c(rp1,rp2,rp3),ncol=3,byrow = TRUE)
+colnames(ma) <- c("test1","test2","test3")
+rownames(ma) <- c("p-value")
+ma <- as.table(ma)
+ma
+```
+
+## Conclustions
+As the hypothesis part show, the confidence interval is 95%, and only when the dosage is 2, the p-value is greater than 0.05 threshold. 
+
+So we can say,  the OJ have better performance in dosage 0.5 and 1.0, OJ and VC have the same effect only when dosage is 2.0

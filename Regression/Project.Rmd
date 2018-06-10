@@ -1,0 +1,109 @@
+---
+title: "Regression Models Course Project"
+author: "yhuai"
+date: "2018/4/22"
+output:
+  pdf_document: default
+  html_document: default
+---
+#Coursera Data Science Regression Models Course Project
+
+You work for Motor Trend, a magazine about the automobile industry. Looking at a data set of a collection of cars, they are interested in exploring the relationship between a set of variables and miles per gallon (MPG) (outcome). They are particularly interested in the following two questions:
+
+1.Is an automatic or manual transmission better for MPG?
+
+2.Quantify the MPG difference between automatic and manual transmissions
+
+## Overview
+
+```{r}
+library(datasets)
+library(MASS)
+library(ggfortify)
+library(car)
+
+data("mtcars")
+str(mtcars)
+```
+
+From the result of str function, we need to understand the meaning of variables:
+mpg--miles per gallon | cyl--Number of cylinders | disp--Displacement | hp--horsepower |drat--Rear axle ratio | wt--weight(lb/1000) | qsec--1/4 mile time | vs--V/S | am--transmission(0 is auto, 1 is manual) | gear--gears | carb--carburetors
+
+## Exploratory Data Analysis
+
+First of all, we want to compare the automatic and manual simply in a boxplot:
+
+```{r}
+mtcars$am <- factor(mtcars$am, labels=c("Automatic","Manual"))
+boxplot(mtcars$mpg ~ mtcars$am, xlab="Transmission Types", ylab="MPG", main="MPG  by Transmission Types", col=c("red","yellow"))
+```
+
+From the boxplot, we got preliminary opinion that manual clearly have more MPG than auto. Now let's go deeply.
+
+## Regression Analysis
+
+```{r}
+pairs(mpg ~ ., data = mtcars, panel=panel.smooth, main="Overview")
+fit1 <- lm(mpg ~ am,data = mtcars); summary(fit1)
+```
+
+From the pairs, we can find that "mpg" may has linear relationsip with multiple variables, so our model must consider multiple parameters. Here we take advantages from AIC test and ANOVA test. Taking into account the statistical fit of the model and the parameters used to fit the model, the smaller the AIC value, the more preferential the model is selected. This shows that with fewer parameters a sufficient degree of fitness can be obtained.
+
+```{r}
+my_lms <- lm(mpg ~. ,data = mtcars)
+stepAIC(my_lms)
+```
+
+From the result, we choose "lm(mpg ~ wt + qsec + am)" with the lowest ACI, but we also need to check "lm(mpg ~ hp + wt + qsec + am)" which has pretty lower ACI value. Then, check them with our base model "fit1" by ANOVA.
+
+```{r}
+fit2 <- lm(mpg ~ wt + qsec + am, data = mtcars)
+fit3 <- lm(mpg ~ hp + wt + qsec + am,data = mtcars)
+anova(fit1,fit2,fit3)
+```
+
+The results from ANOVA shows that "hp" is not necessary and our first choice "Model2" is great. From summary function, the R-squared value shows it is fitting and P-value shows it is significant, give us reliance of our model.
+
+```{r}
+summary(fit2)
+```
+
+## Residual and Diagnostics
+
+Residual and diagnostics are important. We start from the plot:
+
+```{r}
+autoplot(fit2)
+```
+
+
+The Residuals vs Fitted -- The abscissa is the Y value in the fitted equation, and the ordinate is the residual value. The closer the fitting curve is to 0, the smaller the error between the fitting function and the sample point, and the better the model.
+
+The Normal Q-Q -- The abscissa is the quantile of the standard normal distribution, and the ordinate is the sample value. Whether the points on the Q-Q diagram are approximately in the vicinity of a straight line is used to identify whether the sample data approximates a normal distribution.
+
+The Scale-Location --If the invariant variance hypothesis is met, the points around the horizon should be randomly distributed in this plot.
+
+The Residual vs Leverage -- there are some outliers, high leverage and strong influence points fall outside the confidence interval
+
+We have to find out the special points for improving our model in the future:
+
+```{r}
+outlierTest(fit2)
+influencePlot(fit2)
+```
+
+
+## Inference
+
+t-test also give us some useful information:
+
+```{r}
+t.test(mpg ~ am, data = mtcars)
+```
+
+From the result of t-test we can say manual and automatic transmissions have significantly different influence on mpg, manual gets 7.245 more mpg(average).
+
+
+## Conclusion
+To sum up, manual transmission is better for MPG. The manual transmission cars have 2.9358 more MPG than automatic transmission cars(When "wt" and "qsec" stay in constant)
+
