@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/382481/f211d88d2cc6473dbe6bbdaed46a87dd
+bundleId: https://api.rpubs.com/api/v1/document/382481/f211d88d2cc6473dbe6bbdaed46a87dd
+url: http://rpubs.com/yhuai001/382481
+when: 1527192757.19987
